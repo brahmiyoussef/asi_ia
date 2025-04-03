@@ -1,0 +1,3 @@
+langchain
+psycopg2
+langchain-ollama
