@@ -2,14 +2,14 @@ import psycopg2
 import pandas as pd
 import sys
 
-def connect_to_db(database, user, host, password, port):
+def connect_to_db(database):
     try:
         conn = psycopg2.connect(
             database=database,
-            user=user,
-            host=host,
-            password=password,
-            port=port
+            user="postgres",
+            host="localhost",
+            password="admin",
+            port=5432
         )
         return conn
     except psycopg2.Error as e:
@@ -20,7 +20,9 @@ def disconnect_from_db(conn):
     if conn:
         conn.close()
 
-def sql_to_dataframe(conn, query, column_names):
+def sql_to_dataframe(conn, query):
+    column_names=['id', 'received_at', 'sent_at', 'status', 'payload', 'creation_date', 'route_id', 'operation_type', 'type', 'fk_matching_id', 'reject_rsn', 'storage_key_file_in']
+
     cursor = conn.cursor()
     try:
         cursor.execute(query)
@@ -35,3 +37,8 @@ def sql_to_dataframe(conn, query, column_names):
 
 def pattern_historique(route_id):
     return 0
+
+
+QUERY='''SELECT *
+FROM messages
+WHERE received_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month');'''
